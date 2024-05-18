@@ -12,14 +12,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Service
 public class WebSocketService {
     private static final String WEBSOCKET_URI = "ws://localhost:8080/ws";
-    private static final String TOPIC_DESTINATION = "/topic/public";
     private static final Logger log = LoggerFactory.getLogger(WebSocketService.class);
     private final MappingJackson2MessageConverter messageConverter;
+  //  private static final String PUBLIC_TOPIC_DESTINATION = "/topic/public";
+   // private static final String PRIVATE_QUEUE_DESTINATION = "/user/queue/private"; // Note the "/user" prefix
 
     private StompSession session;
 
@@ -34,23 +36,19 @@ public class WebSocketService {
         stompClient.setMessageConverter(messageConverter);
 
         StompSessionHandler sessionHandler = new CustomStompSessionHandler(this);
-        session = stompClient.connect(WEBSOCKET_URI, sessionHandler).get();
-
-        session.subscribe(TOPIC_DESTINATION, sessionHandler);
+        try {
+            session = stompClient.connect(WEBSOCKET_URI, sessionHandler).get();
+            //session.subscribe(PUBLIC_TOPIC_DESTINATION, sessionHandler);
+            session.subscribe("/user/topic/specific-user/", sessionHandler);
+        } catch (Exception e) {
+            e.printStackTrace();
+            retryConnection();
+        }
     }
 
-//    private EventDto getSampleEvent(String eventId) {
-//        EventDto eventDto = new EventDto();
-//        eventDto.setEventId(eventId);
-//        eventDto.setEventType(EventDto.EventType.INFO);
-//        eventDto.setTimestamp(LocalDateTime.now());
-//        eventDto.setDescription("Hello from client");
-//        return eventDto;
-//    }
-
-    public <T> void sendObject(T object) throws JsonProcessingException {
+    public <T> void sendObject(String destination,T object) throws JsonProcessingException {
         log.info("Sending message: {}", object.toString());
-        session.send("/app/send-event", object);
+        session.send(destination, object);
     }
 
     public void retryConnection() {

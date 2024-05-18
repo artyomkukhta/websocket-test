@@ -17,7 +17,6 @@ public class CustomStompSessionHandler extends StompSessionHandlerAdapter {
         this.webSocketService = webSocketClientConfig;
     }
 
-
     @Override
     public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
         logger.info("Connected to WebSocket server");
