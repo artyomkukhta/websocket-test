@@ -40,6 +40,129 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "http://localhost:8080/settings/send-all",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"settings for all\",\r\n    \"videoFormat\": \"mp4\",\r\n    \"online\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/settings/send-all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"settings",
+						"send-all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/settings/send-all Copy",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"settings for 2\",\r\n    \"videoFormat\": \"mp4\",\r\n    \"online\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/settings/send-specific/a7af32dd-c1eb-4964-ac80-9e3aba5d937a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"settings",
+						"send-specific",
+						"a7af32dd-c1eb-4964-ac80-9e3aba5d937a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8383/send-private-message/941e6242-0dcb-443f-adda-3877a7bf9a8a",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\" : \"testprivate\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8383/send-private-message/941e6242-0dcb-443f-adda-3877a7bf9a8a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8383",
+					"path": [
+						"send-private-message",
+						"941e6242-0dcb-443f-adda-3877a7bf9a8a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:9090/api/send",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "content",
+							"value": "dsadas",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:9090/api/send",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"send"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
