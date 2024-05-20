@@ -1,61 +1,36 @@
 package com.farnell.server.controller;
 
-import com.farnell.server.controller.dto.EventDto;
-import com.farnell.server.model.Event;
-import com.farnell.server.service.EventService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.messaging.handler.annotation.Header;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
-import org.springframework.stereotype.Controller;
+import com.farnell.server.controller.dto.SettingsDto;
+import com.farnell.server.service.SettingsService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController("/settings")
+@RequestMapping("/settings")
 public class EventController {
-    private final EventService eventService;
-    private static final Logger log = LoggerFactory.getLogger(EventController.class);
-    private final SimpMessagingTemplate messagingTemplate;
-    private final ConcurrentMap<String, String> sessionClientIdMap = new ConcurrentHashMap<>();
 
-    public EventController(EventService eventService, SimpMessagingTemplate messagingTemplate) {
-        this.eventService = eventService;
-        this.messagingTemplate = messagingTemplate;
+    private static final Logger log = LogManager.getLogger(EventController.class);
+    private final SettingsService service;
+
+    public EventController(SettingsService service) {
+        this.service = service;
     }
 
-    @MessageMapping("/send-event")
-    public void receiveEvent(@Payload EventDto eventDto, @Header("simpSessionId") String sessionId) {
-        log.info("Received Event: {}", eventDto.toString());
-        log.info("Session ID: {}", sessionId);
-        sessionClientIdMap.put(sessionId, eventDto.getClientId());
-
-        Event event = Event.builder()
-                .eventType(Event.EventType.valueOf(eventDto.getEventType().toString()))
-                .eventId(eventDto.getEventId())
-                .timestamp(eventDto.getTimestamp())
-                .description(eventDto.getDescription())
-                .build();
-        eventService.save(event);
-
-        messagingTemplate.convertAndSendToUser(sessionId, "/topic/specific-user", eventDto);
-
-        //messagingTemplate.convertAndSendToUser(headerAccessor.getSessionId(), "/topic/public", eventDto);
-        //messagingTemplate.convertAndSend("/topic/public", eventDto);
+    @PostMapping("/send-all")
+    public void sendMessage(@RequestBody final SettingsDto settingsDto) {
+        service.sendAll(settingsDto);
+        log.info("Settings {} sent to all clients", settingsDto);
+        //return ResponseEntity.ok().build();
     }
-  /*  @MessageMapping("/send-event-to-client")
-    public void sendEventToSpecificClient(@Payload EventDto eventDto, StompHeaderAccessor headerAccessor) {
-        String targetClientId = eventDto.getClientId();  // Идентификатор клиента, которому нужно отправить сообщение
 
-        sessionClientIdMap.forEach((sessionId, clientId) -> {
-            if (clientId.equals(targetClientId)) {
-                messagingTemplate.convertAndSendToUser(sessionId, "/user/queue/private", eventDto);
+    @PostMapping("/send-specific/{id}")
+    public void sendPrivateMessage(@PathVariable final String id,
+                                   @RequestBody final SettingsDto settingsDto) {
+        service.send(id, settingsDto);
+        log.info("Settings {} sent to client {}", settingsDto, id);
 
-            }
-        });
-    }*/
+      //  return ResponseEntity.ok().build(); так вылетает ошибка с GET
+    }
 }

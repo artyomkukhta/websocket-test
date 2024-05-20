@@ -32,7 +32,7 @@ public class EventController {
     public ResponseEntity<EventDto> createEvent(@RequestBody EventDto event) {
         event.setClientId(CLIENT_ID);
         try {
-            socketService.sendObject("/app/send-event", event);
+            socketService.sendObject("/app/receive-private-event", event);
         } catch (JsonProcessingException e) {
             // Обработка ошибки сериализации
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

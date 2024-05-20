@@ -2,5 +2,5 @@ spring:
   application:
     name: 'client'
 server:
-  port: 8082
+  port: 8081
 

@@ -14,20 +14,14 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 public class WsConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        RequestUpgradeStrategy upgradeStrategy = new TomcatRequestUpgradeStrategy();
-
-        /*registry.addEndpoint("/ws")
-                .setHandshakeHandler(new DefaultHandshakeHandler(upgradeStrategy))
-                .setAllowedOrigins("*");*/
         registry.addEndpoint("/ws")
+                .setHandshakeHandler(new UserHandshakeHandler())
                 .setAllowedOrigins("*");
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker( "/topic/specific-user", "/user");
+        registry.enableSimpleBroker("/topic");
         registry.setApplicationDestinationPrefixes("/app");
-        registry.setUserDestinationPrefix("/user");
-
     }
 }

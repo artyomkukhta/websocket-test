@@ -12,10 +12,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/events")
 public class EventController {
+
+    private static final String CLIENT_ID = UUID.randomUUID().toString();
+
 
     private final WebSocketService socketService;
 
@@ -25,8 +30,9 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventDto> createEvent(@RequestBody EventDto event) {
+        event.setClientId(CLIENT_ID);
         try {
-            socketService.sendObject(event);
+            socketService.sendObject("/app/receive-private-event", event);
         } catch (JsonProcessingException e) {
             // Обработка ошибки сериализации
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
