@@ -10,13 +10,10 @@ public class EventDto {
     private EventType eventType;
     private LocalDateTime timestamp;
     private String description;
-    private String clientId; // Добавьте это поле
-
+    private String clientId;
     public enum EventType {
         ALARM,
         WARN,
         INFO
     }
-
-    // Getters and setters
 }
