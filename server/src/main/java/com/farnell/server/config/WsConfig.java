@@ -14,10 +14,8 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 public class WsConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        RequestUpgradeStrategy upgradeStrategy = new TomcatRequestUpgradeStrategy();
-
         registry.addEndpoint("/ws")
-                .setHandshakeHandler(new DefaultHandshakeHandler(upgradeStrategy))
+                .setHandshakeHandler(new UserHandshakeHandler())
                 .setAllowedOrigins("*");
     }
 

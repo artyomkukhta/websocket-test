@@ -1,43 +1,36 @@
 package com.farnell.server.controller;
 
-import com.farnell.server.controller.dto.EventDto;
-import com.farnell.server.model.Event;
-import com.farnell.server.service.EventService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
+import com.farnell.server.controller.dto.SettingsDto;
+import com.farnell.server.service.SettingsService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@Controller
+import org.springframework.web.bind.annotation.*;
+
+@RestController("/settings")
+@RequestMapping("/settings")
 public class EventController {
-    private final EventService eventService;
-    private static final Logger log = LoggerFactory.getLogger(EventController.class);
 
+    private static final Logger log = LogManager.getLogger(EventController.class);
+    private final SettingsService service;
 
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
+    public EventController(SettingsService service) {
+        this.service = service;
     }
 
-    @MessageMapping("/send-event")
-    @SendTo("/topic/public")
-    public EventDto receiveEvent(@Payload EventDto eventDto) {
-        log.info("Received Event: {}", eventDto.toString());
-        Event event = Event.builder()
-                .eventType(eventDto.getEventType())
-                .eventId(eventDto.getEventId())
-                .timestamp(eventDto.getTimestamp())
-                .description(eventDto.getDescription())
-                .build();
-         eventService.save(event);
-         return eventDto;
+    @PostMapping("/send-all")
+    public void sendMessage(@RequestBody final SettingsDto settingsDto) {
+        service.sendAll(settingsDto);
+        log.info("Settings {} sent to all clients", settingsDto);
+        //return ResponseEntity.ok().build();
     }
 
-    /*@MessageMapping("/chat.send")
-    @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
-        return chatMessage;
-    }*/
+    @PostMapping("/send-specific/{id}")
+    public void sendPrivateMessage(@PathVariable final String id,
+                                   @RequestBody final SettingsDto settingsDto) {
+        service.send(id, settingsDto);
+        log.info("Settings {} sent to client {}", settingsDto, id);
 
+      //  return ResponseEntity.ok().build(); так вылетает ошибка с GET
+    }
 }
