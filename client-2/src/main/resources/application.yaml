@@ -1,6 +1,12 @@
 spring:
   application:
-    name: 'client-2'
+    name: 'client2'
 server:
   port: 8082
-
+mqtt:
+  broker:
+    url: tcp://localhost:1883
+  client:
+    id: mqttClient-2
+  secret:
+    value: secret

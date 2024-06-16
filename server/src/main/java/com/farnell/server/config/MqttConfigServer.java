@@ -31,9 +31,8 @@ public class MqttConfigServer {
     @Value("${mqtt.secret.value}")
     private String secret;
 
-    private String subTopic = "test/events";
-    private String pubTopic = "test/settings";
-
+    private String subTopic = "/events";
+    private String defaultPublishTopic = "/settings";
 
 
     @Bean
@@ -60,6 +59,7 @@ public class MqttConfigServer {
                 new MqttPahoMessageDrivenChannelAdapter(clientId + "_inbound", mqttClientFactory(), subTopic);
         adapter.setOutputChannel(mqttInputChannel());
         adapter.setConverter(new DefaultPahoMessageConverter());
+        adapter.setQos(2);
         return adapter;
     }
 
@@ -73,7 +73,6 @@ public class MqttConfigServer {
                 String payload = (String) message.getPayload();
                 log.info("Received message: " + payload);
             }
-
         };
     }
 
@@ -88,7 +87,7 @@ public class MqttConfigServer {
         MqttPahoMessageHandler adapter =
                 new MqttPahoMessageHandler(clientId + "_outbound", mqttClientFactory());
         adapter.setAsync(true);
-        adapter.setDefaultTopic(pubTopic);
+        adapter.setDefaultTopic(defaultPublishTopic);
         adapter.setConverter(new DefaultPahoMessageConverter());
         return adapter;
     }

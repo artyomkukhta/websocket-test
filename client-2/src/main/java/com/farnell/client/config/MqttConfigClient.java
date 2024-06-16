@@ -14,7 +14,6 @@ import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
 import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
-import org.springframework.integration.mqtt.support.MqttHeaders;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
@@ -31,7 +30,7 @@ public class MqttConfigClient {
     @Value("${mqtt.secret.value}")
     private String secret;
 
-    private String[] subTopics = {"/mqttClient-1/settings"};
+    private String[] subTopics = {"/mqttClient-2/settings"};
     private String defaultPublishTopic = "/events";
 
     @Bean
@@ -40,8 +39,10 @@ public class MqttConfigClient {
         MqttConnectOptions options = new MqttConnectOptions();
         options.setServerURIs(new String[]{brokerUrl});
         options.setCleanSession(true);
-        options.setUserName(clientId);  // Используйте clientId здесь
+        options.setUserName(clientId);
         options.setPassword(secret.toCharArray());
+
+        //  options.setMqttVersion();
         factory.setConnectionOptions(options);
         return factory;
     }
@@ -58,7 +59,6 @@ public class MqttConfigClient {
         adapter.setOutputChannel(mqttInputChannel());
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(2);
-
         return adapter;
     }
 
@@ -66,13 +66,12 @@ public class MqttConfigClient {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return message -> {
-            String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
-            log.info("Message arrived. Topic: " + topic);
+            log.info("This is our topic");
             String payload = (String) message.getPayload();
             log.info("Received message: " + payload);
+
         };
     }
-
 
     @Bean
     public MessageChannel mqttOutboundChannel() {
@@ -86,7 +85,6 @@ public class MqttConfigClient {
                 new MqttPahoMessageHandler(clientId + "_outbound", mqttClientFactory());
         adapter.setAsync(true);
         adapter.setDefaultTopic(defaultPublishTopic);
-
         adapter.setConverter(new DefaultPahoMessageConverter());
         return adapter;
     }

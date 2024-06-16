@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/client-2.main.iml" filepath="$PROJECT_DIR$/.idea/modules/client-2.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/client.main.iml" filepath="$PROJECT_DIR$/.idea/modules/client.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/websocket-test-with mqtt.iml" filepath="$PROJECT_DIR$/.idea/websocket-test-with mqtt.iml" />
     </modules>
   </component>
 </project>

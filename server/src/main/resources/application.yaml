@@ -15,6 +15,6 @@ mqtt:
   broker:
     url: tcp://localhost:1883
   client:
-    id: mqttClient
+    id: mqttServer
   secret:
     value: secret
