@@ -66,10 +66,12 @@ public class MqttConfigClient {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return message -> {
-            String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
-            log.info("Message arrived. Topic: " + topic);
-            String payload = (String) message.getPayload();
-            log.info("Received message: " + payload);
+            String topic = message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC).toString();
+            if (topic.equals(this.subTopics[0])) {
+                log.info("This is our topic");
+                String payload = (String) message.getPayload();
+                log.info("Received message: " + payload);
+            }
         };
     }
 
